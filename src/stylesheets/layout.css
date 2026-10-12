@@ -1,0 +1,116 @@
+:root {
+  --tiffany: #81d8d0;
+  --tiffany-deep: #2aa89f;
+  --ink: #0d3836;
+  --pink: #ff8fb8;
+  --pink-deep: #e0558c;
+  --pink-soft: #ffd8e6;
+  --cream: #fff7f4;
+  --line: #bfe8e3;
+  --sleep: 0;
+  --rem: 0;
+}
+
+body {
+  min-height: 100vh;
+  padding: 28px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: radial-gradient(circle at 15% 0%, var(--pink-soft), transparent 55%), var(--cream);
+}
+
+/* the room gets darker the deeper the subject sleeps */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  opacity: calc(var(--sleep) * 0.6);
+  pointer-events: none;
+}
+
+.Lab {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 28px;
+  border-radius: 40px;
+  background: linear-gradient(160deg, #a3e7e0, var(--tiffany) 45%, #6cc9c0);
+  box-shadow:
+    0 24px 60px rgba(13, 56, 54, 0.3),
+    0 0 calc(var(--rem) * 90px) calc(var(--rem) * 12px) var(--pink),
+    inset 0 2px 0 rgba(255, 255, 255, 0.7);
+  transition: box-shadow 0.6s;
+}
+
+.Header,
+.Transport {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.Panels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.Stages {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.Stages > button {
+  width: 100%;
+}
+
+.Report {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 24px;
+  align-items: center;
+}
+
+.Pads {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.Mixer {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 860px) {
+  body {
+    padding: 12px;
+  }
+
+  .Lab {
+    padding: 16px;
+    border-radius: 28px;
+  }
+
+  .Panels,
+  .Mixer,
+  .Report {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .Stages,
+  .Pads {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

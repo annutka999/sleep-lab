@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SLEEP LAB — a dream laboratory synthesizer" />
+    <title>SLEEP LAB</title>
+
+    <link rel="icon" href="src/images/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="src/stylesheets/style.css" />
+
+    <script src="src/libraries/Tone.js"></script>
+    <script src="src/javascripts/script.js" defer></script>
+  </head>
+
+  <body>
+    <main class="Lab">
+      <header class="Header">
+        <div>
+          <p class="Eyebrow" data-hint="Subject 07 is the sleeper. The clock shows the time of the night">Subject 07 · night <span id="clock">23:10</span></p>
+          <h1 class="Header__title">Sleep <em>Lab</em></h1>
+        </div>
+        <div class="Transport">
+          <span class="Status" id="stageName">Standby</span>
+          <button class="Button" id="powerButton" data-hint="Start / pause the experiment (Space)">Power on</button>
+        </div>
+      </header>
+
+      <section class="Scope">
+        <canvas class="Scope__canvas" id="scope"></canvas>
+        <span class="Scope__label" data-hint="Output level before the limiter. Red = too loud, the sound can crackle">EEG · <span id="level">OUT -99 dB</span></span>
+        <p class="Scope__hint" id="hint"></p>
+      </section>
+
+      <section class="Panel Panel--night">
+        <h2 class="Panel__label">The night</h2>
+        <div class="Stages">
+          <button class="Stage" data-stage="awake" data-hint="1 · Awake: busy brain, fast pulse">Awake</button>
+          <button class="Stage" data-stage="n1" data-hint="2 · N1: falling asleep, thoughts thin out">N1</button>
+          <button class="Stage" data-stage="n2" data-hint="3 · N2: body takes over, noise rises">N2</button>
+          <button class="Stage" data-stage="n3" data-hint="4 · N3: deep sleep, only body and pulse">N3 deep</button>
+          <button class="Stage" data-stage="rem" data-hint="5 · REM: the brain glitches and echoes">REM</button>
+          <button class="Stage" data-stage="wake" data-hint="6 · Wake up: everything opens and brightens">Wake</button>
+          <button class="Button Button--accent" id="nightButton" data-hint="Plays the whole night by itself. Grab any knob to take over">Auto night ▶</button>
+        </div>
+        <div class="Report" data-hint="Report: the phase of sleep and what the subject sees. It follows the knobs">
+          <div>
+            <p class="Report__phase" id="phaseName"></p>
+            <p class="Report__meta" id="phaseMeta"></p>
+          </div>
+          <p class="Report__dream" id="dreamText"></p>
+        </div>
+      </section>
+
+      <section class="Panels">
+        <article class="Panel Panel--body">
+          <h2 class="Panel__label">Body</h2>
+          <p class="Panel__description">low / slow / physical</p>
+          <div class="Waves" data-voice="body" data-hint="Waveform of the BODY voice">
+            <button class="Wave is-active" data-wave="sine">Sine</button>
+            <button class="Wave" data-wave="triangle">Tri</button>
+            <button class="Wave" data-wave="square">Sq</button>
+            <button class="Wave" data-wave="sawtooth">Saw</button>
+          </div>
+          <div class="Knobs">
+            <div class="Knob" data-param="pulse"></div>
+            <div class="Knob" data-param="depth"></div>
+            <div class="Knob" data-param="drift"></div>
+          </div>
+          <p class="Panel__chain">synth → filter → chorus</p>
+        </article>
+
+        <article class="Panel Panel--sleep">
+          <h2 class="Panel__label">Sleep</h2>
+          <p class="Panel__description">global state</p>
+          <div class="Readout" id="readout" data-hint="Display only, not a button: the brain-wave band typical for this phase"></div>
+          <div class="Knobs">
+            <div class="Knob" data-param="sleep"></div>
+            <div class="Knob" data-param="noise"></div>
+            <div class="Knob" data-param="wake"></div>
+          </div>
+          <p class="Panel__chain">reverb → filter → limiter</p>
+        </article>
+
+        <article class="Panel Panel--brain">
+          <h2 class="Panel__label">Brain</h2>
+          <p class="Panel__description">high / unstable / neural</p>
+          <div class="Waves" data-voice="brain" data-hint="Waveform of the BRAIN voice">
+            <button class="Wave" data-wave="sine">Sine</button>
+            <button class="Wave is-active" data-wave="triangle">Tri</button>
+            <button class="Wave" data-wave="square">Sq</button>
+            <button class="Wave" data-wave="sawtooth">Saw</button>
+          </div>
+          <div class="Knobs">
+            <div class="Knob" data-param="brain"></div>
+            <div class="Knob" data-param="rem"></div>
+            <div class="Knob" data-param="echo"></div>
+          </div>
+          <p class="Panel__chain">synth → vibrato → filter → ping-pong</p>
+        </article>
+      </section>
+
+      <section class="Panel Panel--dreams">
+        <h2 class="Panel__label">Dream events · hover to trigger</h2>
+        <div class="Pads">
+          <button class="Pad" data-dream="fall" data-hint="Falling: a sudden drop in pitch"><span class="Pad__name">Fall</span><span class="Pad__sub">missed step</span></button>
+          <button class="Pad" data-dream="bell" data-hint="A distant bell from a house you do not know"><span class="Pad__name">Bell</span><span class="Pad__sub">far away</span></button>
+          <button class="Pad" data-dream="whisper" data-hint="Someone says your name behind you"><span class="Pad__name">Whisper</span><span class="Pad__sub">behind you</span></button>
+          <button class="Pad" data-dream="jolt" data-hint="Hypnic jerk: the heart skips and the body twitches"><span class="Pad__name">Jolt</span><span class="Pad__sub">hypnic jerk</span></button>
+          <button class="Pad" data-dream="swell" data-hint="The room breathes louder for a moment"><span class="Pad__name">Swell</span><span class="Pad__sub">room breath</span></button>
+        </div>
+      </section>
+
+      <section class="Panel Panel--channels">
+        <h2 class="Panel__label">Channels</h2>
+        <div class="Mixer">
+          <div class="Channel" data-channel="body" data-hint="BODY channel: left speaker"></div>
+          <div class="Channel" data-channel="brain" data-hint="BRAIN channel: right speaker"></div>
+          <div class="Channel" data-channel="pulse" data-hint="Heartbeat channel"></div>
+          <div class="Channel" data-channel="noise" data-hint="Breathing-noise channel"></div>
+          <div class="Channel" data-channel="dream" data-hint="Dream events channel"></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
