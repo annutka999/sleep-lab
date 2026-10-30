@@ -4,200 +4,413 @@
 
 /* ───────── text ───────── */
 .Eyebrow,
-.Panel__description,
-.Panel__chain,
-.Status {
-  opacity: 0.65;
+.Status,
+.Plate,
+.Digits__unit,
+.Window__meta {
   font-size: 10px;
 }
 
+.Eyebrow,
+.Digits__unit {
+  opacity: 0.65;
+}
+
+.Plate {
+  grid-column: 1 / -1;
+  text-align: right;
+  opacity: 0.6;
+}
+
 .Header__title {
-  font-family: 'Fraunces', serif;
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(44px, 7vw, 76px);
-  line-height: 0.95;
-  letter-spacing: -0.02em;
+  font-family: 'Doto', monospace;
+  font-weight: 700;
+  font-size: min(11.2vw, 142px);
+  margin: 0.1em 0;
+  line-height: 1; /* the line always contains the letters: nothing can overlap the title */
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  filter: blur(calc(var(--sleep) * 1px));
+  opacity: calc(1 - var(--sleep) * 0.3);
+}
+
+/* modern browsers cut the empty space of the font above and below the capitals */
+@supports (text-box: trim-both cap alphabetic) {
+  .Header__title {
+    margin: 0.3em 0 0.22em;
+    text-box: trim-both cap alphabetic;
+  }
+}
+
+.Header__tagline {
+  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: none;
 }
 
-.Header__title em {
-  color: var(--cream);
-  text-shadow: 0 0 24px var(--pink);
-}
-
-/* ───────── buttons ───────── */
+/* ───────── buttons: flat, outlined, invert on hover ───────── */
 .Button,
 .Stage,
-.Wave {
-  padding: 10px 16px;
-  border: 1px solid rgba(13, 56, 54, 0.45);
-  border-radius: 999px;
-  letter-spacing: inherit;
-  text-transform: inherit;
+.Wave,
+.Pad,
+.Channel__button {
+  border: var(--stroke);
   color: var(--ink);
   background: var(--cream);
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background-color 0.15s,
+    color 0.15s,
+    box-shadow 0.15s;
 }
 
-.Button:hover,
-.Stage:hover,
-.Wave:hover {
-  background: var(--pink-soft);
-  box-shadow: 0 0 14px rgba(255, 143, 184, 0.9);
+.Button,
+.Stage,
+.Wave {
+  padding: 10px 14px;
+  border-radius: 6px;
+  letter-spacing: inherit;
+  text-transform: inherit;
 }
 
 .Button--accent {
   background: var(--pink);
 }
 
+.Button--wide {
+  width: 100%;
+}
+
+.Button:hover,
+.Stage:hover,
+.Wave:hover,
+.Pad:hover,
+.Channel__button:hover {
+  color: var(--ink);
+  background: var(--pink-soft);
+  box-shadow: 0 0 14px rgba(255, 143, 184, 0.85);
+}
+
+.Button--accent:hover {
+  background: #ffb1cd;
+}
+
+.Stage.is-active,
+.Waves .Wave.is-active,
+.Channel__button.is-active,
+.Button.is-active {
+  color: var(--ink);
+  background: var(--pink);
+  box-shadow: 0 0 14px var(--pink);
+}
+
+/* the night as a ladder: stage name on the left, time on the right */
 .Stage {
-  background: var(--tiffany);
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--mint);
 }
 
-.is-active,
-.Button.is-active,
-.Stage.is-active {
-  background: var(--ink);
-  color: var(--pink-soft);
-  box-shadow: 0 0 16px var(--pink);
+.Stage::after {
+  content: attr(data-time);
+  font-family: 'Doto', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.05em;
 }
 
-/* ───────── EEG scope ───────── */
-.Scope {
+/* ───────── dream window ───────── */
+.Window {
   position: relative;
-  height: 150px;
-  border-radius: 26px;
-  background:
-    repeating-linear-gradient(0deg, transparent 0 24px, rgba(129, 216, 208, 0.12) 24px 25px),
-    var(--ink);
-  box-shadow: inset 0 4px 22px rgba(0, 0, 0, 0.55);
+  flex: 1;
+  min-height: 340px;
+  overflow: hidden;
+  border: var(--stroke);
+  border-radius: 6px;
+  background: var(--ink);
+  box-shadow:
+    0 0 36px rgba(129, 216, 208, 0.4),
+    0 0 calc(var(--rem) * 60px) calc(var(--rem) * 8px) var(--pink);
+  transition: box-shadow 0.8s;
 }
 
-.Scope__canvas {
+/* a measuring scale along the bottom edge */
+.Window::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 247, 244, 0.4) 0 1px,
+    transparent 1px 10px
+  );
+  pointer-events: none;
+}
+
+.Window__canvas {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.Scope__label,
-.Scope__hint {
+.Window__label,
+.Window__hint {
   position: absolute;
+  top: 16px;
   font-size: 10px;
   color: var(--tiffany);
 }
 
-.Scope__label .is-hot {
+.Window__label {
+  left: 20px;
+}
+
+.Window__label .is-hot {
   color: #ff6b4a;
 }
 
-.Scope__label {
-  top: 14px;
-  left: 20px;
+.Window__hint {
+  right: 20px;
+  max-width: 60%;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--pink-soft);
 }
 
-.Scope__hint {
-  right: 20px;
-  bottom: 14px;
+.Window__caption {
+  position: absolute;
+  bottom: 28px;
   left: 20px;
-  min-height: 12px;
+  max-width: 68%;
+  padding: 14px 18px;
+  background: rgba(13, 56, 54, 0.78);
+  color: var(--cream);
+}
+
+.Window__phase {
+  font-family: 'Bodoni Moda', serif;
+  font-style: italic;
+  font-size: 34px;
+  line-height: 1.05;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--tiffany);
+}
+
+.Window__dream {
+  margin-top: 8px;
+  font-family: 'Bodoni Moda', serif;
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.Window__meta {
+  margin-top: 10px;
   color: var(--pink-soft);
+}
+
+.is-new {
+  animation: appear 1.2s;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
 }
 
 /* ───────── panels ───────── */
 .Panel {
+  display: flex;
+  flex-direction: column;
   --ring: var(--ink);
+  --glow: var(--pink);
   padding: 22px;
-  border-radius: 26px;
+  border: var(--stroke);
+  border-radius: 6px;
   background: var(--cream);
-  box-shadow: inset 0 -3px 0 rgba(42, 168, 159, 0.25);
 }
 
 .Panel--body {
   --ring: var(--tiffany-deep);
-  background: #d6f5f0;
+  --glow: var(--tiffany-deep);
+  background: var(--mint);
 }
 
 .Panel--brain {
   --ring: var(--pink-deep);
+  --glow: var(--pink-deep);
   background: var(--pink-soft);
 }
 
-/* SLEEP sits between the two voices, so it blends both colors */
-.Panel--sleep {
-  background: linear-gradient(135deg, #d6f5f0, var(--pink-soft));
-}
-
 .Panel__label {
-  color: var(--tiffany-deep);
-}
-
-.Panel--brain .Panel__label {
-  color: var(--pink-deep);
-}
-
-.Panel--sleep .Panel__label {
   color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+.Panel__label::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--ring);
 }
 
 .Panel__description {
   margin: 6px 0 16px;
-  font-family: 'Fraunces', serif;
-  font-style: italic;
-  font-size: 18px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
   text-transform: none;
-  letter-spacing: 0;
-  opacity: 1;
+  opacity: 0.7;
 }
 
-.Panel__chain {
-  margin-top: 18px;
-}
-
-.Waves,
-.Readout {
+.Waves {
   display: flex;
   align-items: center;
   gap: 6px;
   height: 38px;
-  margin-bottom: 22px;
+  margin-bottom: 26px;
 }
 
 .Waves .Wave {
   flex: 1;
   height: 100%;
   padding: 0;
-  background: #fff;
-}
-
-.Waves .Wave.is-active,
-.Channel__button.is-active {
-  background: var(--ink);
-  color: var(--pink-soft);
-  box-shadow: 0 0 14px var(--pink);
 }
 
 .Readout {
-  justify-content: center;
-  border: 1px solid rgba(13, 56, 54, 0.45);
-  border-radius: 10px;
-  background: var(--ink);
-  color: var(--tiffany);
+  margin: 8px 0 0;
+  text-align: center;
   font-size: 10px;
+  opacity: 0.7;
 }
 
-/* ───────── knobs (new look) ───────── */
+/* EEG bands: four LED columns that follow the state of the sleeper */
+.Bands {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.Band {
+  --level: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.Band__bar {
+  display: flex;
+  align-items: flex-end;
+  height: 54px;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(13, 56, 54, 0.14) 0 4px,
+    transparent 4px 7px
+  );
+}
+
+.Band__fill {
+  display: block;
+  width: 100%;
+  height: calc(var(--level) * 100%);
+  background: repeating-linear-gradient(
+    0deg,
+    var(--tone, var(--ink)) 0 4px,
+    transparent 4px 7px
+  );
+  transition: height 0.4s;
+}
+
+.Band[data-band='delta'] {
+  --tone: var(--tiffany-deep);
+}
+
+.Band[data-band='theta'] {
+  --tone: var(--tiffany);
+}
+
+.Band[data-band='alpha'] {
+  --tone: var(--pink);
+}
+
+.Band[data-band='beta'] {
+  --tone: var(--pink-deep);
+}
+
+.Band__label {
+  font-size: 9px;
+  line-height: 1.4;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* dot-matrix readouts */
+.Digits {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.Digits__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.Panel__subtitle {
+  margin: 22px 0 10px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  opacity: 0.7;
+}
+
+.Digits__value {
+  font-family: 'Doto', monospace;
+  font-weight: 700;
+  font-size: 54px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+/* ───────── knobs: ring, printed scale, cap ───────── */
 .Knobs {
+  margin-block: auto;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px 8px;
+  gap: 26px 18px;
+}
+
+.Knobs--sleep {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.Knob--large {
+  grid-column: 1 / -1;
 }
 
 .Knob {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 14px;
   cursor: ns-resize;
   user-select: none;
   touch-action: none;
@@ -206,11 +419,50 @@
 .Knob__dial {
   --norm: 0;
   position: relative;
-  width: 78px;
-  height: 78px;
+  width: 74px;
+  height: 74px;
   border-radius: 50%;
-  background: conic-gradient(from -135deg, var(--ring) calc(var(--norm) * 270deg), var(--line) 0 270deg, transparent 0);
-  transition: filter 0.2s;
+  background: conic-gradient(
+    from -135deg,
+    var(--ring) calc(var(--norm) * 270deg),
+    var(--line) 0 270deg,
+    transparent 0
+  );
+}
+
+.Knob--large .Knob__dial {
+  width: 118px;
+  height: 118px;
+}
+
+/* printed scale around the dial: 11 marks over 270 degrees */
+.Knob__dial::after {
+  content: '';
+  position: absolute;
+  inset: -11px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from -135deg,
+    rgba(13, 56, 54, 0.65) 0 1.4deg,
+    transparent 1.4deg 27deg
+  );
+  -webkit-mask:
+    radial-gradient(
+      circle closest-side,
+      transparent calc(100% - 7px),
+      #000 calc(100% - 7px)
+    ),
+    conic-gradient(from -135deg, #000 0 271deg, transparent 0);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(
+      circle closest-side,
+      transparent calc(100% - 7px),
+      #000 calc(100% - 7px)
+    ),
+    conic-gradient(from -135deg, #000 0 271deg, transparent 0);
+  mask-composite: intersect;
+  pointer-events: none;
 }
 
 .Knob__dial::before {
@@ -218,165 +470,205 @@
   position: absolute;
   inset: 8px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, var(--pink-soft));
-  box-shadow: 0 5px 12px rgba(13, 56, 54, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: var(--stroke);
+  background: var(--cream);
 }
 
 .Knob__needle {
   position: absolute;
   inset: 0;
+  z-index: 1;
 }
 
 .Knob__needle::after {
   content: '';
   position: absolute;
-  top: 13px;
+  top: 12px;
   left: calc(50% - 2px);
   width: 4px;
   height: 16px;
   border-radius: 2px;
   background: var(--ring);
-  box-shadow: 0 0 8px var(--ring);
+}
+
+.Knob--large .Knob__needle::after {
+  top: 16px;
+  width: 5px;
+  height: 24px;
 }
 
 .Knob:hover .Knob__dial,
 .Knob:active .Knob__dial {
-  filter: drop-shadow(0 0 10px var(--pink));
+  filter: drop-shadow(0 0 10px var(--glow));
 }
 
 .Knob__value {
-  color: var(--tiffany-deep);
   font-size: 10px;
+  opacity: 0.7;
 }
 
-/* ───────── channels (faders in the same look) ───────── */
+/* ───────── channels ───────── */
 .Channel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: 50px minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .Channel__name {
-  grid-column: 1 / -1;
   font-size: 10px;
 }
 
 .Channel__fader {
   appearance: none;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--line);
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ink);
   cursor: pointer;
 }
 
 .Channel__fader::-webkit-slider-thumb {
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
+  border: var(--stroke);
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, var(--pink-soft));
-  box-shadow: 0 0 0 3px var(--pink-deep), 0 3px 8px rgba(13, 56, 54, 0.35);
+  background: var(--pink);
 }
 
 .Channel__fader::-moz-range-thumb {
   width: 12px;
   height: 12px;
-  border: 0;
+  border: var(--stroke);
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, var(--pink-soft));
-  box-shadow: 0 0 0 3px var(--pink-deep), 0 3px 8px rgba(13, 56, 54, 0.35);
-}
-
-.Channel__fader:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px var(--pink-deep), 0 0 12px var(--pink);
+  background: var(--pink);
 }
 
 .Channel__button {
-  width: 28px;
-  padding: 5px 0;
-  border: 1px solid rgba(13, 56, 54, 0.45);
-  border-radius: 8px;
+  padding: 5px 8px;
+  border-radius: 4px;
   font-size: 10px;
-  background: var(--tiffany);
-  cursor: pointer;
-  transition: box-shadow 0.2s;
+  background: var(--mint);
 }
 
-.Channel__button:hover {
-  box-shadow: 0 0 10px var(--pink);
+/* ───────── dream events: light pads, dark only while the dream plays ───────── */
+.Pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 6px 14px;
+  border-radius: 6px;
+  text-align: center;
 }
 
-/* ───────── report ───────── */
-.Report {
-  padding: 18px 22px;
-  border: 1px solid rgba(13, 56, 54, 0.45);
-  border-radius: 20px;
-  background: var(--ink);
+.Pad__icon {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 4px;
+  fill: var(--ink);
+  transition: fill 0.15s;
+}
+
+.Pad__ring {
+  fill: none;
+  stroke: var(--ink);
+  stroke-dasharray: 1 3;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+  transition: stroke 0.15s;
+}
+
+.Pad__name {
+  font-size: 11px;
+}
+
+.Pad__sub {
+  font-size: 9px;
+  opacity: 0.6;
+}
+
+.Pad.is-playing {
   color: var(--cream);
+  background: var(--ink);
 }
 
-.Report__phase {
-  font-family: 'Fraunces', serif;
-  font-style: italic;
-  font-size: 30px;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--tiffany);
+.Pad.is-playing .Pad__icon {
+  fill: var(--tiffany);
 }
 
-.Report__meta {
-  margin-top: 6px;
-  font-size: 10px;
-  color: var(--pink-soft);
+.Pad.is-playing .Pad__ring {
+  stroke: var(--tiffany);
 }
 
-.Report__dream {
-  font-family: 'Fraunces', serif;
-  font-style: italic;
-  font-size: 21px;
-  line-height: 1.3;
-  letter-spacing: 0;
-  text-transform: none;
+/* each dream has its own small animation of dots */
+.Pad.is-playing .Pad__icon circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-duration: 1s;
+  animation-fill-mode: both;
 }
 
-.is-new {
-  animation: appear 0.9s;
+.Pad[data-dream='fall'].is-playing .Pad__icon circle {
+  animation-name: dot-fall;
+  animation-timing-function: ease-in;
 }
 
-@keyframes appear {
-  from {
+.Pad[data-dream='bell'].is-playing .Pad__icon circle {
+  animation-name: dot-ripple;
+}
+
+.Pad[data-dream='whisper'].is-playing .Pad__icon circle {
+  animation-name: dot-wave;
+}
+
+.Pad[data-dream='whisper'].is-playing .Pad__icon circle:nth-child(2n) {
+  animation-delay: 0.12s;
+}
+
+.Pad[data-dream='jolt'].is-playing .Pad__icon circle {
+  animation-name: dot-shake;
+  animation-duration: 0.45s;
+}
+
+.Pad[data-dream='swell'].is-playing .Pad__icon circle {
+  animation-name: dot-swell;
+}
+
+@keyframes dot-fall {
+  to {
+    transform: translateY(14px);
     opacity: 0;
   }
 }
 
-/* ───────── dream events ───────── */
-.Pad {
-  padding: 20px 8px;
-  border: 1px solid rgba(13, 56, 54, 0.45);
-  border-radius: 18px;
-  color: var(--ink);
-  background: var(--cream);
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+@keyframes dot-ripple {
+  50% {
+    transform: scale(1.7);
+    opacity: 0.4;
+  }
 }
 
-.Pad:hover,
-.Pad.is-hit {
-  background: var(--pink-soft);
-  box-shadow: 0 0 20px var(--pink);
+@keyframes dot-wave {
+  50% {
+    transform: scaleY(2.6);
+  }
 }
 
-.Pad__name,
-.Pad__sub {
-  display: block;
+@keyframes dot-shake {
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
 }
 
-.Pad__sub {
-  margin-top: 6px;
-  font-size: 9px;
-  opacity: 0.6;
+@keyframes dot-swell {
+  50% {
+    transform: scale(1.35);
+  }
 }
 
 .Lab--flash {
@@ -385,6 +677,170 @@
 
 @keyframes flash {
   from {
-    box-shadow: 0 0 120px 30px var(--pink);
+    box-shadow: 0 0 100px 20px var(--pink);
   }
+}
+
+/* ───────── hypnogram ───────── */
+.Hypnogram {
+  display: block;
+  width: 100%;
+  height: 150px;
+}
+
+/* ───────── night log ───────── */
+.Log__list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 0;
+  list-style: none;
+}
+
+.Log__item {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-size: 11px;
+}
+
+/* the newest entry is the brightest, older ones fade away */
+.Log__item:nth-child(2) {
+  opacity: 0.75;
+}
+
+.Log__item:nth-child(3) {
+  opacity: 0.55;
+}
+
+.Log__item:nth-child(n + 4) {
+  opacity: 0.38;
+}
+
+.Log__time {
+  min-width: 54px;
+  font-family: 'Doto', monospace;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+}
+
+.Log__item:first-child .Log__time {
+  color: var(--pink-deep);
+}
+
+/* ───────── record button ───────── */
+.Button--rec::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: #e8483a;
+}
+
+.Button--rec.is-recording {
+  background: var(--pink);
+}
+
+.Button--rec.is-recording::before {
+  animation: blink 1s steps(2) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ───────── voice display: the note and the signal chain ───────── */
+.Voice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.Voice__note {
+  min-width: 3em;
+  font-family: 'Doto', monospace;
+  font-weight: 700;
+  font-size: 46px;
+  line-height: 1;
+}
+
+.Voice__note.is-new {
+  animation: note-tick 0.3s;
+}
+
+.Voice__label {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.Chain {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.Chain__chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 7px 2px;
+  border: var(--stroke);
+  border-radius: 4px;
+  background: var(--cream);
+  text-align: center;
+}
+
+.Chain__chip:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  top: 50%;
+  right: -12px;
+  width: 12px;
+  font-size: 10px;
+  text-align: center;
+  transform: translateY(-50%);
+}
+
+.Chain__name {
+  font-size: 8px;
+  opacity: 0.7;
+}
+
+.Chain__value {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+/* every note sends a flash through the chain: you see the signal flow */
+.Chain.is-flowing .Chain__chip {
+  animation: chip-flash 0.5s both;
+  animation-delay: calc(var(--i) * 70ms);
+}
+
+@keyframes chip-flash {
+  from {
+    background: color-mix(in srgb, var(--glow) 40%, var(--cream));
+  }
+}
+
+@keyframes note-tick {
+  from {
+    opacity: 0.3;
+  }
+}
+
+/* the end of the night closes the ladder of stages */
+.Stage--finale {
+  grid-column: 1 / -1;
 }

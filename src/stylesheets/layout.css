@@ -6,7 +6,10 @@
   --pink-deep: #e0558c;
   --pink-soft: #ffd8e6;
   --cream: #fff7f4;
+  --mint: #d6f5f0;
   --line: #bfe8e3;
+  --stroke: 1px solid var(--ink);
+
   --sleep: 0;
   --rem: 0;
 }
@@ -14,12 +17,12 @@
 body {
   min-height: 100vh;
   padding: 28px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink);
-  background: radial-gradient(circle at 15% 0%, var(--pink-soft), transparent 55%), var(--cream);
+  background: url('../images/grain.svg'), var(--cream);
 }
 
 /* the room gets darker the deeper the subject sleeps */
@@ -32,24 +35,55 @@ body::before {
   pointer-events: none;
 }
 
+/* the casing: flat color with grain, like painted metal */
 .Lab {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 16px;
-  max-width: 1140px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 28px;
-  border-radius: 40px;
-  background: linear-gradient(160deg, #a3e7e0, var(--tiffany) 45%, #6cc9c0);
-  box-shadow:
-    0 24px 60px rgba(13, 56, 54, 0.3),
-    0 0 calc(var(--rem) * 90px) calc(var(--rem) * 12px) var(--pink),
-    inset 0 2px 0 rgba(255, 255, 255, 0.7);
-  transition: box-shadow 0.6s;
+  border: var(--stroke);
+  border-radius: 20px;
+  background: url('../images/grain.svg'), var(--tiffany);
 }
 
-.Header,
+.Header {
+  grid-column: 1 / -1;
+}
+
+.Window {
+  grid-column: span 8;
+}
+
+.Panel.Record {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 40px;
+}
+
+.Panel--subject {
+  grid-column: span 4;
+}
+
+.Panels {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr 1fr;
+  gap: 16px;
+}
+
+.Panel--dreams {
+  grid-column: span 5;
+}
+
+.Panel--channels {
+  grid-column: span 7;
+}
+
+.Header__top,
 .Transport {
   display: flex;
   align-items: center;
@@ -57,60 +91,51 @@ body::before {
   gap: 16px;
 }
 
-.Panels {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
 .Stages {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.Stages > button {
-  width: 100%;
-}
-
-.Report {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  gap: 24px;
-  align-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0 0 14px;
 }
 
 .Pads {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
+}
+
+/* three pads in the first row, two wider ones in the second */
+.Pad:nth-child(-n + 3) {
+  grid-column: span 2;
+}
+
+.Pad:nth-child(n + 4) {
+  grid-column: span 3;
 }
 
 .Mixer {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px;
+  gap: 12px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   body {
     padding: 12px;
   }
 
   .Lab {
     padding: 16px;
-    border-radius: 28px;
+  }
+
+  .Window,
+  .Panel--subject,
+  .Panel--dreams,
+  .Panel--channels {
+    grid-column: 1 / -1;
   }
 
   .Panels,
-  .Mixer,
-  .Report {
+  .Panel.Record {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .Stages,
-  .Pads {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
